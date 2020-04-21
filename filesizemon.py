@@ -18,7 +18,7 @@ import time
 from pprint import pprint
 
 bc = float(0)
-bc_item = ''
+bc_item = None
 
 
 def get_change_stats(item, current, previous):
@@ -71,8 +71,10 @@ def logsizemon():
             previous = i_sizes[item]
             print(get_change_stats(item, current, previous))
         print("\033[1;33m------------------------------------------\033[0;37m")
-        print("\033[1;32mMAX CHANGE: {:f}% for {}\033[0;37m".format(bc,
-                                                                    bc_item))
+        if bc_item is not None:
+            print("\033[1;32mMax Change:")
+            print("{:f}% for {}\033[0;37m".format(bc,
+                                                  bc_item))
         time.sleep(10)
 
 
