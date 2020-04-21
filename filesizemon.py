@@ -17,28 +17,33 @@ import os
 import time
 from pprint import pprint
 
-biggest_change = float(0)
-biggest_change_item = ''
+bc = float(0)
+bc_item = ''
 
-def get_change_stats(item,current,previous):
-  global biggest_change
-  global biggest_change_item
+
+def get_change_stats(item, current, previous):
+  global bc
+  global bc_item
   bn = os.path.basename(item)
   if current == previous:
-    x= '{:50}\tCUR={:10}\tORIG={:10}\tCHANGE=0%'.format(bn,current,previous)
+    x = '{:50}\tCUR={:10}\tORIG={:10}\tCHANGE=0%'.format(bn, current, previous)
   else:
     change_percent = ((float(current)-previous)/previous)*100
-    if change_percent > biggest_change:
-      biggest_change = change_percent
-      biggest_change_item = item
-    x = '{:50}\tCUR={:10}\tORIG={:10}\tCHANGE={:f}%'.format(bn,current,previous,change_percent)
+    if change_percent > bc:
+      bc = change_percent
+      bc_item = item
+    x = '{:50}\tCUR={:10}\tORIG={:10}\tCHANGE={:f}%'.format(bn,
+                                                            current,
+                                                            previous,
+                                                            change_percent)
   return(x)
+
 
 def logsizemon():
   try:
     pat = sys.argv[1]
   except Exception:
-    print("Usage EXAMPLE: {} '/var/log/apache2/*access*log'".format(sys.argv[0]))
+    print("Usage EXAMPLE: {} '/logs/*.log'".format(sys.argv[0]))
     sys.exit(1)
 
   i_sizes = {}
@@ -47,7 +52,7 @@ def logsizemon():
   # load initial file sizes
   print('Loading initial sizes...')
   for f in glob.glob(sys.argv[1]):
-    i_sizes[f]  = os.path.getsize(f)
+    i_sizes[f] = os.path.getsize(f)
 
   # Initial wait
   print('Waiting 10 seconds to begin monitoring...')
@@ -57,16 +62,17 @@ def logsizemon():
     # Get current file sizes
     for f in glob.glob(sys.argv[1]):
       # FIX: Include newly appeared files
-      c_sizes[f]  = os.path.getsize(f)
+      c_sizes[f] = os.path.getsize(f)
     print("\033[2J\033[0;0H\033[0;37m")  # ANSI ftw
     for item in i_sizes:
       current = c_sizes[item]
       previous = i_sizes[item]
-      print(get_change_stats(item,current,previous))
+      print(get_change_stats(item, current, previous))
     print("\033[1;33m------------------------------------------\033[0;37m")
-    print("\033[1;32mCURRENT BIGGEST CHANGE: {:f}% for {}\033[0;37m".format(biggest_change,biggest_change_item))
+    print("\033[1;32mMAX CHANGE: {:f}% for {}\033[0;37m".format(bc,
+                                                                bc_item))
     time.sleep(10)
-    
+
 
 if __name__ == '__main__':
   logsizemon()
