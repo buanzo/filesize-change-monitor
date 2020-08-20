@@ -17,6 +17,8 @@ import os
 import time
 from pprint import pprint
 
+__version__ = '0.1.0'
+
 bc = float(0)
 bc_item = None
 
